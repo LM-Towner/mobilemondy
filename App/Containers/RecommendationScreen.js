@@ -14,6 +14,14 @@ import styles from './Styles/LoginScreenStyles'
 import {Images, Metrics} from '../Themes'
 import LoginActions from '../Redux/LoginRedux'
 
+
+// api call to check if everyone is done swiping
+// if everyone is done swiping
+// show top recommendations
+// but if some people are still swiping
+// this.props.navigation.navigate('CalendarScreen')
+// and show who still hasnt finished swiping
+
 class RecommendationScreen extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
