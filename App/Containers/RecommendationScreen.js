@@ -14,7 +14,7 @@ import styles from './Styles/LoginScreenStyles'
 import {Images, Metrics} from '../Themes'
 import LoginActions from '../Redux/LoginRedux'
 
-class LoginScreen extends React.Component {
+class RecommendationScreen extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     fetching: PropTypes.bool,
@@ -79,8 +79,8 @@ class LoginScreen extends React.Component {
     const { username, password } = this.state
     this.isAttempting = true
     // attempt a login - a saga is listening to pick it up from here.
-    this.props.attemptLogin(username, password)
-    this.props.navigation.navigate('CalendarScreen')
+    // this.props.attemptLogin(username, password)
+    // this.props.navigation.navigate('ResultsScreen')
   }
 
   handleChangeUsername = (text) => {
@@ -118,32 +118,17 @@ class LoginScreen extends React.Component {
           </View>
 
           <View style={styles.row}>
-            <Text style={styles.rowLabel}>Password</Text>
-            <TextInput
-              ref='password'
-              style={textInputStyle}
-              value={password}
-              editable={editable}
-              keyboardType='default'
-              returnKeyType='go'
-              autoCapitalize='none'
-              autoCorrect={false}
-              secureTextEntry
-              onChangeText={this.handleChangePassword}
-              underlineColorAndroid='transparent'
-              onSubmitEditing={this.handlePressLogin}
-              placeholder='Password' />
           </View>
 
           <View style={[styles.loginRow]}>
             <TouchableOpacity style={styles.loginButtonWrapper} onPress={this.handlePressLogin}>
               <View style={styles.loginButton}>
-                <Text style={styles.loginText}>Sign In</Text>
+                <Text style={styles.loginText}>Submit</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.loginButtonWrapper} onPress={() => this.props.navigation.goBack()}>
               <View style={styles.loginButton}>
-                <Text style={styles.loginText}>Register</Text>
+                <Text style={styles.loginText}>Back</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -166,4 +151,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(RecommendationScreen)
