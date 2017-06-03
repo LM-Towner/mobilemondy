@@ -1,0 +1,25 @@
+{
+  "name": "round",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "recommendations": {
+      "type": "hasMany",
+      "model": "recommendation",
+      "foreignKey": ""
+    },
+    "players": {
+      "type": "hasMany",
+      "model": "player",
+      "foreignKey": "",
+      "through": "recommendation"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

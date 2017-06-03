@@ -1,0 +1,19 @@
+{
+  "name": "date",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "player": {
+      "type": "belongsTo",
+      "model": "player",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
