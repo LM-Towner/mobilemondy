@@ -1,6 +1,12 @@
 {
   "db": {
-    "name": "db",
-    "connector": "memory"
+    "host": "",
+    "port": 0,
+    "url": "mongodb://admin:dbc2017@ds163181.mlab.com:63181/hangouts",
+    "database": "hangouts",
+    "password": "",
+    "name": "dbtest",
+    "user": "",
+    "connector": "mongodb"
   }
 }
