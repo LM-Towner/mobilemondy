@@ -1,6 +1,6 @@
 import React from 'react'
 import { ListView, Text, Image, View } from 'react-native'
-import styles from './Styles/LaunchScreenStyles'
+import styles from './Styles/LoginScreenStyles'
 import Calendar from '../Components/Calendar'
 
 export default class CalendarScreen extends React.Component {
@@ -34,12 +34,16 @@ export default class CalendarScreen extends React.Component {
 
     render() {
         return (
-            <Calendar
-                date={this.state.date}
-                onPrevButtonPress={() => this.handlePrevButtonPress()}
-                onNextButtonPress={() => this.handleNextButtonPress()}
-                onDateSelect={(date) => this.handleDateSelect(date)}
-            />
+            <View style={styles.container}>
+                <Text>Please select the day you are free</Text>
+
+                <Calendar
+                    date={this.state.date}
+                    onPrevButtonPress={() => this.handlePrevButtonPress()}
+                    onNextButtonPress={() => this.handleNextButtonPress()}
+                    onDateSelect={(date) => this.handleDateSelect(date)}
+                />
+            </View>
         );
     }
 }

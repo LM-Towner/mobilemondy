@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     },
 
     dayWeekendText: {
-        color: "#BF360C",
+        // color: "#BF360C",
     },
 
     bar: {

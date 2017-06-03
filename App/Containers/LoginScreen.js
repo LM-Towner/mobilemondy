@@ -141,14 +141,8 @@ class LoginScreen extends React.Component {
                 <Text style={styles.loginText}>Sign In</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButtonWrapper} onPress={() => this.props.navigation.goBack()}>
-              <View style={styles.loginButton}>
-                <Text style={styles.loginText}>Register</Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
-
       </ScrollView>
     )
   }
