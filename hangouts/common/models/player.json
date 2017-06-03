@@ -1,0 +1,32 @@
+{
+  "name": "player",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "first_name": {
+      "type": "string",
+      "required": true
+    },
+    "last_name": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "recommendations": {
+      "type": "hasMany",
+      "model": "recommendation",
+      "foreignKey": ""
+    },
+    "dates": {
+      "type": "hasMany",
+      "model": "date",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
