@@ -1,10 +1,12 @@
 import React from 'react'
-import { ListView, Text, Image, View } from 'react-native'
+import { TouchableOpacity, Button, ListView, Text, Image, View } from 'react-native'
 import styles from './Styles/LaunchScreenStyles'
 import Calendar from '../Components/Calendar'
 
+// api call to get this data
 const DummyData = {
   date: new Date(),
+  ready: true,
   users: [
     {
       username: 'roman',
@@ -37,7 +39,7 @@ export default class CalendarScreen extends React.Component {
     }
 
     requestGridData() {
-      // return fetch('https://facebook.github.io/react-native/movies.json')
+      // return fetch('https://localhost:4000/eventDate?username={this.state.username}')
       //   .then((response) => response.json())
       //   .then((responseJson) => {
       //     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -53,8 +55,16 @@ export default class CalendarScreen extends React.Component {
       const response = DummyData; // remove this line after api endpoint returns live data
       const users = response.users; // remove this line after api endpoint returns live data
       const today = response.date; // remove this line after api endpoint returns live data
-      this.setState({dataSource: ds.cloneWithRows(users)});
-      this.setState({date: today});
+      const ready = response.ready; // remove this line after api endpoint returns live data
+      this.setState({
+        dataSource: ds.cloneWithRows(users),
+        date: today,
+        ready: ready
+      });
+
+      // const statuses = users.map(function(user) {
+      //   return user.status;
+      // });
     }
 
     componentDidMount() {
@@ -77,8 +87,8 @@ export default class CalendarScreen extends React.Component {
         });
     }
 
-    handleDateSelect(date) {
-      this.props.navigation.navigate('RecommendationScreen')
+    swipeVote = () => {
+      this.props.navigation.navigate('SwipeScreen')
     }
 
     renderRow(data) {
@@ -91,19 +101,41 @@ export default class CalendarScreen extends React.Component {
     }
 
     render() {
-      const asdf = this.state.date;
+      const today = this.state.date;
+      const ready = this.state.ready;
 
-      return (
-        <View>
-          <Text>{asdf.getUTCDay()}/{asdf.getUTCDate()}</Text>
+      if(ready) {
+        return (
+          <View>
+            <Text>{today.getUTCDay()}/{today.getUTCDate()}/2017</Text>
 
-          <ListView
-            contentContainerStyle={styles.listView}
-            dataSource={this.state.dataSource}
-            initialListSize={35}
-            renderRow={this.renderRow}
-          />
-        </View>
-      );
+            <ListView
+              contentContainerStyle={styles.listView}
+              dataSource={this.state.dataSource}
+              initialListSize={35}
+              renderRow={this.renderRow}
+            />
+
+            <Button
+              onPress={this.swipeVote}
+              title="SwipeVote!"
+            >
+            </Button>
+          </View>
+        );
+      } else {
+        return (
+          <View>
+            <Text>{today.getUTCDay()}/{today.getUTCDate()}/2017</Text>
+
+            <ListView
+              contentContainerStyle={styles.listView}
+              dataSource={this.state.dataSource}
+              initialListSize={35}
+              renderRow={this.renderRow}
+            />
+          </View>
+        );
+      }
     }
 }

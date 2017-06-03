@@ -4,6 +4,7 @@ import LoginScreen from '../Containers/LoginScreen'
 import CalendarScreen from '../Containers/CalendarScreen'
 import RecommendationScreen from '../Containers/RecommendationScreen'
 import DayScreen from '../Containers/DayScreen'
+import SwipeScreen from '../Containers/SwipeScreen'
 
 import styles from './Styles/NavigationStyles'
 
@@ -13,6 +14,7 @@ const PrimaryNav = StackNavigator({
   CalendarScreen: { screen: CalendarScreen },
   RecommendationScreen: { screen: RecommendationScreen },
   DayScreen: { screen: DayScreen },
+  SwipeScreen: { screen: SwipeScreen },
   LoginScreen: {
     screen: LoginScreen,
     navigationOptions: { title: 'Login' }
