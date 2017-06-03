@@ -13,6 +13,8 @@ import { connect } from 'react-redux'
 import styles from './Styles/LoginScreenStyles'
 import {Images, Metrics} from '../Themes'
 import LoginActions from '../Redux/LoginRedux'
+import MainScreen from './MainScreen'
+
 
 class LoginScreen extends React.Component {
   static propTypes = {
@@ -31,10 +33,12 @@ class LoginScreen extends React.Component {
       username: 'reactnative@infinite.red',
       password: 'password',
       visibleHeight: Metrics.screenHeight,
-      topLogo: { width: Metrics.screenWidth }
+      topLogo: { width: Metrics.screenWidth },
+      errors: []
     }
     this.isAttempting = false
   }
+
 
   componentWillReceiveProps (newProps) {
     this.forceUpdate()
@@ -75,11 +79,58 @@ class LoginScreen extends React.Component {
     })
   }
 
+async login() {
+    this.setState({showProgress: true})
+    console.log(this.state.username)
+    console.log(this.state.password)
+    try {
+      let response = await fetch('http://localhost:4000/api/players', {
+                              method: 'POST',
+                              headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                  first_name: this.state.username
+                              })
+                            });
+      let res = await response.text();
+
+      if (response.status >= 200 && response.status < 300) {
+          //Handle success
+          let accessToken = res;
+          console.log("token is " + accessToken);
+          //On success we will store the access_token in the AsyncStorage
+          // this.storeToken(accessToken);
+          this.props.navigation.navigate('MainScreen');
+      } else {
+          //Handle error
+          let error = res;
+          throw error;
+      }
+    } catch(errors) {
+      //errors are in JSON form so we must parse them first.
+      let formErrors = JSON.parse(errors);
+      //We will store all the errors in the array.
+      let errorsArray = [];
+      for(var key in formErrors) {
+        //If array is bigger than one we need to split it.
+        if(formErrors[key].length > 1) {
+            formErrors[key].map(error => errorsArray.push(`${key} ${error}`));
+        } else {
+            errorsArray.push(`${key} ${formErrors[key]}`);
+        }
+      }
+      this.setState({errors: errorsArray})
+      this.setState({showProgress: false});
+    }
+  }
+
   handlePressLogin = () => {
     const { username, password } = this.state
     this.isAttempting = true
     // attempt a login - a saga is listening to pick it up from here.
-    this.props.attemptLogin(username, password)
+    this.login()
   }
 
   handleChangeUsername = (text) => {
@@ -101,6 +152,9 @@ class LoginScreen extends React.Component {
         <View style={styles.form}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Username</Text>
+            <Text>
+              {this.state.username}
+            </Text>
             <TextInput
               ref='username'
               style={textInputStyle}
@@ -161,7 +215,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    attemptLogin: (username, password) => dispatch(LoginActions.loginRequest(username, password))
+    attemptLogin: (username, password) => {
+      dispatch(LoginActions.loginRequest(username, password))
+    }
   }
 }
 
