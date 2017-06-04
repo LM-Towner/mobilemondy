@@ -34,6 +34,7 @@ export default class DayScreen extends React.Component {
     console.log(this.props.navigation.state.params.selectedDate);
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+
     this.state = {
       date: this.props.navigation.state.params.selectedDate,
       dataSource: ds.cloneWithRows([{}])
@@ -41,17 +42,26 @@ export default class DayScreen extends React.Component {
   }
 
   requestData() {
-    // return fetch('https://localhost:3000/api/?username={this.state.username}')
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    //     // set the response to dummy data
-    //     responseJson = DummyData; // remove this line after api endpoint returns live data
-    //     this.setState({dataSource: ds.cloneWithRows(responseJson)});
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    const queryUrl = JSON.stringify({
+      "where": {
+        "date": this.state.date
+      }
+    });
+
+    console.log(queryUrl);
+
+    return fetch('http://localhost:3000/api/rounds?filter=' + queryUrl)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        // set the response to dummy data
+        responseJson = DummyData; // remove this line after api endpoint returns live data
+        this.setState({dataSource: ds.cloneWithRows(responseJson)});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     // set the response to dummy data
     const response = DummyData; // remove this line after api endpoint returns live data
@@ -73,9 +83,37 @@ export default class DayScreen extends React.Component {
     this.requestData();
   }
 
-  handleSubmitButtonPress() {
+  handleSubmitButtonPress = () => {
     const date = this.state.date;
     const deviceId = DeviceInfo.getUniqueID();
+    const dummyArray = [
+      {
+        name: 'test location 1',
+        imageUrl: 'http://loopback.io/images/overview/powered-by-LB-xs.png'
+      },
+      {
+        name: 'test location 2',
+        imageUrl: 'http://loopback.io/images/overview/powered-by-LB-sm.png'
+      },
+      {
+        name: 'test location 3',
+        imageUrl: 'http://loopback.io/images/overview/powered-by-LB-med.png'
+      }
+    ];
+
+    // const dummyArray = [
+    //   'http://loopback.io/images/overview/powered-by-LB-xs.png',
+    //   'http://loopback.io/images/overview/powered-by-LB-sm.png',
+    //   'http://loopback.io/images/overview/powered-by-LB-med.png',
+    // ]
+
+    const postBody = {
+      date: date,
+      deviceId: deviceId,
+      test: dummyArray,
+    };
+
+    console.log(postBody);
 
     fetch('http://localhost:3000/api/rounds', {
       method: 'POST',
@@ -83,25 +121,7 @@ export default class DayScreen extends React.Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        id: date,
-        date: date,
-        deviceId: deviceId,
-        recommendations: [
-          {
-            name: 'test location 1',
-            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-xs.png'
-          },
-          {
-            name: 'test location 2',
-            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-sm.png'
-          },
-          {
-            name: 'test location 3',
-            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-med.png'
-          }
-        ]
-      })
+      body: JSON.stringify(postBody)
     });
   }
 
@@ -137,6 +157,7 @@ export default class DayScreen extends React.Component {
           <Text>Everyone is ready!</Text>
 
           <Button onPress={this.swipeVote} title="SwipeVote!" />
+          <Button onPress={() => this.props.navigation.goBack()} title="Back"/>
         </View>
       );
     } else {
@@ -154,6 +175,7 @@ export default class DayScreen extends React.Component {
           <YelpSearch />
           
           <Button onPress={this.handleSubmitButtonPress} title="Submit" />
+          <Button onPress={() => this.props.navigation.goBack()} title="Back"/>
         </View>
       );
     }
