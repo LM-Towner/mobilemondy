@@ -41,17 +41,17 @@ export default class DayScreen extends React.Component {
   }
 
   requestData() {
-    return fetch('https://localhost:3000/api/?username={this.state.username}')
-      .then((response) => response.json())
-      .then((responseJson) => {
-        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-        // set the response to dummy data
-        responseJson = DummyData; // remove this line after api endpoint returns live data
-        this.setState({dataSource: ds.cloneWithRows(responseJson)});
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // return fetch('https://localhost:3000/api/?username={this.state.username}')
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    //     // set the response to dummy data
+    //     responseJson = DummyData; // remove this line after api endpoint returns live data
+    //     this.setState({dataSource: ds.cloneWithRows(responseJson)});
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     // set the response to dummy data
     const response = DummyData; // remove this line after api endpoint returns live data
