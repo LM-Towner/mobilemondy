@@ -2,13 +2,14 @@ import React from 'react'
 import { StyleSheet, TouchableOpacity, Button, ListView, Text, Image, View } from 'react-native'
 // import styles from './Styles/LaunchScreenStyles'
 import Swiper from 'react-native-deck-swiper';
+import DeviceInfo from 'react-native-device-info'
 
 // api call to get this data
 const DummyData = {
   date: new Date(),
   recommendations: [
     'restaurant bar roman',
-    'la-restaurant bar keisha',
+    'la-restaurant bar La-Keisha',
     'restaurant bar richard',
     'restaurant bar kevin'
   ]
@@ -18,35 +19,55 @@ export default class SwipeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      date: new Date(),
+      date: this.props.navigation.state.params.date,
       recommendations: ['default', 'options'],
       swipedAllCards: false
     };
   }
 
   requestGridData() {
-    // return fetch('https://localhost:4000/eventDate?username={this.state.username}')
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    //     // set the response to dummy data
-    //     responseJson = DummyData; // remove this line after api endpoint returns live data
-    //     this.setState({dataSource: ds.cloneWithRows(responseJson)});
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    // set the response to dummy data
-    const response = DummyData; // remove this line after api endpoint returns live data
-    const recommendations = response.recommendations; // remove this line after api endpoint returns live data
-    const today = response.date; // remove this line after api endpoint returns live data
-    const ready = response.ready; // remove this line after api endpoint returns live data
-    this.setState({
-      // dataSource: ds.cloneWithRows(users),
-      date: today,
-      recommendations: recommendations
+    const queryUrl = JSON.stringify({
+      "where": {
+        "date": this.state.date
+      }
     });
+
+    console.log(queryUrl);
+
+    return fetch('http://localhost:3000/api/recommendations?filter=' + queryUrl)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        console.log(responseJson);
+        const recommendations = [];
+
+        responseJson.map(function(r) {
+          recommendations.push([r.imageUrl, r.name]);
+        })
+
+        console.log(recommendations);
+
+        this.setState({
+          // dataSource: ds.cloneWithRows(users),
+          date: this.state.date,
+          recommendations: recommendations
+        });
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    // set the response to dummy data
+    // const response = DummyData; // remove this line after api endpoint returns live data
+    // const recommendations = response.recommendations; // remove this line after api endpoint returns live data
+    // const today = response.date; // remove this line after api endpoint returns live data
+    // const ready = response.ready; // remove this line after api endpoint returns live data
+    // this.setState({
+    //   // dataSource: ds.cloneWithRows(users),
+    //   date: today,
+    //   recommendations: recommendations
+    // });
 
     // const statuses = users.map(function(user) {
     //   return user.status;
@@ -65,7 +86,7 @@ export default class SwipeScreen extends React.Component {
     // make api call
     // api post that this user is done swiping
 
-    this.props.navigation.navigate('RecommendationScreen')
+    this.props.navigation.navigate('RecommendationScreen', {date: this.state.date, username: this.state.username})
   }
 
   swipeRight = (cardIndex) => {
@@ -84,7 +105,11 @@ export default class SwipeScreen extends React.Component {
           renderCard={(card) => {
             return (
               <View style={styles.card}>
-                <Text style={styles.text}>{card}</Text>
+                <Text style={styles.text}>{card[1]}</Text>
+                <Image
+                  style={{width: 250, height: 250}}
+                  source={{uri: card[0]}}
+                />
               </View>
             )
           }}

@@ -36,6 +36,7 @@ export default class DayScreen extends React.Component {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
     this.state = {
+      ready: false,
       date: this.props.navigation.state.params.selectedDate,
       username: this.props.navigation.state.params.username,
       dataSource: ds.cloneWithRows([{}])
@@ -87,6 +88,9 @@ export default class DayScreen extends React.Component {
   }
 
   handleSubmitButtonPress = () => {
+    this.setState({
+      ready: true
+    });
     const date = this.state.date;
     const deviceId = DeviceInfo.getUniqueID();
     const dummyArray = [
@@ -123,7 +127,7 @@ export default class DayScreen extends React.Component {
   }
 
   swipeVote = () => {
-    this.props.navigation.navigate('SwipeScreen')
+    this.props.navigation.navigate('SwipeScreen', {date: this.state.date, username: this.state.username})
   }
 
   renderRow(data) {
@@ -174,7 +178,7 @@ export default class DayScreen extends React.Component {
             renderRow={(rowData) => this.renderRow(rowData)}
           />
 
-          <YelpSearch />
+          <YelpSearch date={this.state.date} username={this.state.username}/>
           
           <Button onPress={this.handleSubmitButtonPress} title="Submit" />
           <Button onPress={() => this.props.navigation.goBack()} title="Back"/>
