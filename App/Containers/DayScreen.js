@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, Button, ListView, Text, Image, View } from 'react-native'
-import styles from './Styles/LaunchScreenStyles'
+import styles from './Styles/LoginScreenStyles'
 import YelpSearch from '../Components/YelpSearch'
 import DeviceInfo from 'react-native-device-info'
 
@@ -37,6 +37,7 @@ export default class DayScreen extends React.Component {
 
     this.state = {
       date: this.props.navigation.state.params.selectedDate,
+      username: this.props.navigation.state.params.username,
       dataSource: ds.cloneWithRows([{}])
     };
   }
@@ -56,23 +57,25 @@ export default class DayScreen extends React.Component {
         console.log(responseJson);
         const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         // set the response to dummy data
-        responseJson = DummyData; // remove this line after api endpoint returns live data
+        // responseJson = DummyData; // remove this line after api endpoint returns live data
         this.setState({dataSource: ds.cloneWithRows(responseJson)});
       })
       .catch((error) => {
         console.error(error);
       });
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    // const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     // set the response to dummy data
-    const response = DummyData; // remove this line after api endpoint returns live data
-    const users = response.users; // remove this line after api endpoint returns live data
-    const today = response.date; // remove this line after api endpoint returns live data
-    const ready = response.ready; // remove this line after api endpoint returns live data
-
-    this.setState({
-      dataSource: ds.cloneWithRows(users),
-      ready: ready
-    });
+    // const response = DummyData; // remove this line after api endpoint returns live data
+    // const users = response.users; // remove this line after api endpoint returns live data
+    // const today = response.date; // remove this line after api endpoint returns live data
+    // const ready = response.ready; // remove this line after api endpoint returns live data
+    // console.log(response);
+    // console.log(users);
+    // this.setState({
+    //   dataSource: ds.cloneWithRows(users),
+    //   username: this.props.navigation.state.params.username,
+    //   ready: ready
+    // });
 
     // const statuses = users.map(function(user) {
     //   return user.status;
@@ -101,19 +104,13 @@ export default class DayScreen extends React.Component {
       }
     ];
 
-    // const dummyArray = [
-    //   'http://loopback.io/images/overview/powered-by-LB-xs.png',
-    //   'http://loopback.io/images/overview/powered-by-LB-sm.png',
-    //   'http://loopback.io/images/overview/powered-by-LB-med.png',
-    // ]
-
     const postBody = {
       date: date,
       deviceId: deviceId,
+      username: this.state.username,
       test: dummyArray,
+      status: 'ready',
     };
-
-    console.log(postBody);
 
     fetch('http://localhost:3000/api/rounds', {
       method: 'POST',
@@ -130,10 +127,15 @@ export default class DayScreen extends React.Component {
   }
 
   renderRow(data) {
+    console.log(data);
+
+    const status = typeof data.status === 'undefined' ? 'not ready' : data.status;
+
     return (
-      <View>
-        <Text>{data.username}</Text>
-        <Text>{data.status}</Text>
+      <View style={styles.form}>
+        <View style={styles.row}>
+          <Text style={styles.rowLabel}>{data.username} - {status}</Text>
+        </View>
       </View>
     );
   }
@@ -144,17 +146,17 @@ export default class DayScreen extends React.Component {
 
     if(ready) {
       return (
-        <View>
-          <Text>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
+        <View style={{flex: 1, marginTop: 20}}>
+          <Text style={[styles.rowLabel, {textAlign: 'center', fontSize: 20}]}>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
 
           <ListView
             contentContainerStyle={styles.listView}
             dataSource={this.state.dataSource}
             // initialListSize={35}
-            renderRow={this.renderRow}
+            renderRow={(rowData) => this.renderRow(rowData)}
           />
 
-          <Text>Everyone is ready!</Text>
+          <Button onPress={this.swipeVote} title="Everyone is ready!" />
 
           <Button onPress={this.swipeVote} title="SwipeVote!" />
           <Button onPress={() => this.props.navigation.goBack()} title="Back"/>
@@ -162,14 +164,14 @@ export default class DayScreen extends React.Component {
       );
     } else {
       return (
-        <View>
-          <Text>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
+        <View style={{flex: 1, marginTop: 20}}>
+          <Text style={[styles.rowLabel, {textAlign: 'center', fontSize: 20}]}>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
 
           <ListView
             contentContainerStyle={styles.listView}
             dataSource={this.state.dataSource}
-            initialListSize={35}
-            renderRow={this.renderRow}
+            // initialListSize={35}
+            renderRow={(rowData) => this.renderRow(rowData)}
           />
 
           <YelpSearch />

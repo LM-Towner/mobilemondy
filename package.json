@@ -29,6 +29,7 @@
     "format-json": "^1.0.3",
     "lodash": "^4.17.2",
     "moment": "^2.18.1",
+    "node-yelp-fusion": "^1.0.4",
     "querystringify": "0.0.4",
     "ramda": "^0.23.0",
     "react": "~15.4.1",

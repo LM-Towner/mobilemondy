@@ -29,7 +29,7 @@ class LoginScreen extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      username: 'mobile@monday.com',
+      username: 'Richard',
       password: 'password',
       visibleHeight: Metrics.screenHeight,
       topLogo: { width: Metrics.screenWidth }
@@ -97,7 +97,7 @@ class LoginScreen extends React.Component {
       })
     });
 
-    this.props.navigation.navigate('CalendarScreen')
+    this.props.navigation.navigate('CalendarScreen', {username: this.state.username})
   }
 
   handleChangeUsername = (text) => {
@@ -115,8 +115,11 @@ class LoginScreen extends React.Component {
     const textInputStyle = editable ? styles.textInput : styles.textInputReadonly
     return (
       <ScrollView contentContainerStyle={{justifyContent: 'center'}} style={[styles.container, {height: this.state.visibleHeight}]} keyboardShouldPersistTaps='always'>
-        <Image source={Images.logo} style={[styles.topLogo, this.state.topLogo]} />
-        <View style={styles.form}>
+        <Text style={[styles.rowLabel, {textAlign: 'center', fontSize: 50, marginTop: 35, color: 'white'}]}>
+          SwipeVote
+        </Text>
+
+        <View style={[styles.form, {marginTop: 50}]}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Username</Text>
             <TextInput

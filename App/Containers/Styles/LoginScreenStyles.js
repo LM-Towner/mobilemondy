@@ -3,7 +3,7 @@ import { Colors, Metrics } from '../../Themes'
 
 export default StyleSheet.create({
   container: {
-    paddingTop: 70,
+    paddingTop: 30,
     backgroundColor: Colors.background
   },
   form: {

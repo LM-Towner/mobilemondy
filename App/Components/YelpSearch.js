@@ -1,132 +1,95 @@
-import React from 'react'
-import { ScrollView, Text, KeyboardAvoidingView, View, TextInput, TouchableOpacity, Image} from 'react-native'
-import { connect } from 'react-redux'
-
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
-
-// Styles
+ import React, { Component } from 'react';
+ import {
+   AppRegistry,
+   StyleSheet,
+   Text,
+   View,
+   TouchableOpacity,
+   TextInput,
+   ScrollView
+ } from 'react-native';
+import {Images, Metrics} from '../Themes'
 import styles from '../Containers/Styles/LoginScreenStyles'
 
-// const yelp = require('yelp-fusion');
-
-// const searchRequest = {
-//   term:'Four Barrel Coffee',
-//   location: 'san francisco, ca'
-// };
-
-// yelp.accessToken(clientId, clientSecret).then(response => {
-//   const client = yelp.client(response.jsonBody.access_token);
-
-//   client.search(searchRequest).then(response => {
-//     const firstResult = response.jsonBody.businesses[0];
-//     const prettyJson = JSON.stringify(firstResult, null, 4);
-//     console.log(prettyJson);
-//   });
-// }).catch(e => {
-//   console.log(e);
-// });
-
-class YelpSearch extends React.Component {
-  constructor() {
-    super();
+export default class YelpSearch extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      search: "",
-      resultName: "",
-      resultImage: "",
-      recomendations: [],
+      visibleHeight: Metrics.screenHeight,
+      yelpSearch: 'Galvanize',
+      locationState: "New York"
     };
   }
+  handleYelpApiSearch() {
+    const Yelp = require('node-yelp-fusion');
+    const yelp = new Yelp({
+      id:'Z6DVIQ71WCKVMBpIkLceww',
+      secret:'Q36N1FBaRqu39gNQOewKIiLvfZ5R1wudOUe4tk1j3GRBX8rlZMg5T4IUDiLadj8m'
+    });
 
-
-  handlePressLogin = () => {
-    const yelpApiResult = {
-      "id": "four-barrel-coffee-san-francisco",
-      "name": "Four Barrel Coffee",
-      "image_url": "https://s3-media2.fl.yelpcdn.com/bphoto/xs4GEA2BOpPYG7bh7o6GrA/o.jpg",
-      "is_closed": false,
-      "url": "https://www.yelp.com/biz/four-barrel-coffee-san-francisco?adjust_creative=Z6DVIQ71WCKVMBpIkLceww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=Z6DVIQ71WCKVMBpIkLceww",
-      "review_count": 1833,
-      "categories": [
-          {
-              "alias": "coffee",
-              "title": "Coffee & Tea"
-          }
-      ],
-      "rating": 4,
-      "coordinates": {
-          "latitude": 37.7670169511878,
-          "longitude": -122.42184275
-      },
-      "transactions": [],
-      "price": "$",
-      "location": {
-          "address1": "375 Valencia St",
-          "address2": "",
-          "address3": "",
-          "city": "San Francisco",
-          "zip_code": "94103",
-          "country": "US",
-          "state": "CA",
-          "display_address": [
-              "375 Valencia St",
-              "San Francisco, CA 94103"
-          ]
-      },
-      "phone": "+14152520800",
-      "display_phone": "(415) 252-0800",
-      "distance": 1452.798210728
-    }
-
-    this.setState({
-      resultName: yelpApiResult.name,
-      resultImage: yelpApiResult.image_url
-    })
+    yelp.search("term="+this.state.yelpSearch+"&location="+this.state.locationState).then(function(result){
+      this.setState({
+        result: result
+      });
+      console.log(result);
+    });
   }
 
-  addToRecommendation() {}
+  handleChangeYelpSearch = (text) => {
+    this.setState({ yelpSearch: text })
+  }
 
-  render () {
+  handleChangelocationState = (text) => {
+    this.setState({ locationState: text })
+  }
+
+  render() {
     return (
-      <ScrollView style={styles.container}>
-        <TextInput
-          style={{height: 40}}
-          placeholder="Search!"
-          onChangeText={(val) => this.setState({search: val})}
-        />
-
-       <TouchableOpacity style={styles.loginButtonWrapper} onPress={this.handlePressLogin.bind(this)}>
-          <View style={styles.loginButton}>
-            <Text style={styles.loginText}>Search</Text>
+      <ScrollView contentContainerStyle={{justifyContent: 'center'}} style={[styles.container, {height: this.state.visibleHeight/1.5}]} keyboardShouldPersistTaps='always'>
+        <View style={[styles.form]}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Place Search</Text>
+            <TextInput
+              style={styles.textInput}
+              editable={true}
+              keyboardType='default'
+              returnKeyType='next'
+              autoCapitalize='none'
+              autoCorrect={false}
+              onChangeText={this.handleChangeYelpSearch}
+              underlineColorAndroid='transparent'
+              placeholder={this.state.yelpSearch}
+            />
           </View>
-        </TouchableOpacity>
 
-        <Text>
-          {this.state.resultName}
-          {this.state.resultImage}
-        </Text>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Location</Text>
+            <TextInput
+              style={styles.textInput}
+              editable={true}
+              keyboardType='default'
+              returnKeyType='go'
+              autoCapitalize='none'
+              autoCorrect={false}
+              onChangeText={this.handleChangelocationState}
+              underlineColorAndroid='transparent'
+              placeholder={this.state.locationState}
+            />
+          </View>
 
-        <Image
-          style={{height:130, width:130}}
-          source={{uri: this.state.resultImage}}
-        />
-
-        <KeyboardAvoidingView behavior='position'>
-          <Text>YelpSearchScreen Screen</Text>
-        </KeyboardAvoidingView>
+          <View style={[styles.loginRow]}>
+            <TouchableOpacity
+              style={styles.loginButtonWrapper}
+              onPress={this.handleYelpApiSearch.bind(this)}
+            >
+              <View style={styles.loginButton}>
+                <Text style={styles.loginText}>Search</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
-    )
+    );
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(YelpSearch)

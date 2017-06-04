@@ -9,6 +9,7 @@ export default class CalendarScreen extends React.Component {
         super(props);
 
         this.state = {
+            username: this.props.navigation.state.params.username,
             date: new Date()
         };
     }
@@ -30,7 +31,7 @@ export default class CalendarScreen extends React.Component {
     }
 
     handleDateSelect(date) {
-        this.props.navigation.navigate('DayScreen', {selectedDate: date})
+        this.props.navigation.navigate('DayScreen', {selectedDate: date, username: this.state.username})
     }
 
     render() {
