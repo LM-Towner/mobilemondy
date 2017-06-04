@@ -2,6 +2,7 @@ import React from 'react'
 import { ListView, Text, Image, View } from 'react-native'
 import styles from './Styles/LoginScreenStyles'
 import Calendar from '../Components/Calendar'
+import DeviceInfo from 'react-native-device-info'
 
 export default class CalendarScreen extends React.Component {
     constructor(props) {
@@ -29,7 +30,7 @@ export default class CalendarScreen extends React.Component {
     }
 
     handleDateSelect(date) {
-      this.props.navigation.navigate('DayScreen')
+        this.props.navigation.navigate('DayScreen', {selectedDate: date})
     }
 
     render() {

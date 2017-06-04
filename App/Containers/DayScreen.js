@@ -2,6 +2,7 @@ import React from 'react'
 import { TouchableOpacity, Button, ListView, Text, Image, View } from 'react-native'
 import styles from './Styles/LaunchScreenStyles'
 import YelpSearch from '../Components/YelpSearch'
+import DeviceInfo from 'react-native-device-info'
 
 // api call to get this data
 const DummyData = {
@@ -30,26 +31,27 @@ const DummyData = {
 export default class DayScreen extends React.Component {
   constructor(props) {
     super(props);
+    console.log(this.props.navigation.state.params.selectedDate);
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      date: new Date(),
+      date: this.props.navigation.state.params.selectedDate,
       dataSource: ds.cloneWithRows([{}])
     };
   }
 
-  requestGridData() {
-    // return fetch('https://localhost:4000/eventDate?username={this.state.username}')
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    //     // set the response to dummy data
-    //     responseJson = DummyData; // remove this line after api endpoint returns live data
-    //     this.setState({dataSource: ds.cloneWithRows(responseJson)});
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+  requestData() {
+    return fetch('https://localhost:3000/api/?username={this.state.username}')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        // set the response to dummy data
+        responseJson = DummyData; // remove this line after api endpoint returns live data
+        this.setState({dataSource: ds.cloneWithRows(responseJson)});
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     // set the response to dummy data
     const response = DummyData; // remove this line after api endpoint returns live data
@@ -58,7 +60,6 @@ export default class DayScreen extends React.Component {
     const ready = response.ready; // remove this line after api endpoint returns live data
     this.setState({
       dataSource: ds.cloneWithRows(users),
-      date: today,
       ready: ready
     });
 
@@ -68,23 +69,25 @@ export default class DayScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.requestGridData();
+    this.requestData();
   }
 
-  handleNextButtonPress() {
-      const date = new Date(this.state.date);
-      date.setMonth(date.getMonth() + 1);
-      this.setState({
-          date
-      });
-  }
+  handleSubmitButtonPress() {
+    const date = this.state.date;
+    const deviceId = DeviceInfo.getUniqueID();
 
-  handlePrevButtonPress() {
-      const date = new Date(this.state.date);
-      date.setMonth(date.getMonth() - 1);
-      this.setState({
-          date
-      });
+    fetch('http://localhost:3000/api/rounds', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: date,
+          date: date,
+          deviceId: deviceId,
+        })
+    });
   }
 
   swipeVote = () => {
@@ -107,14 +110,16 @@ export default class DayScreen extends React.Component {
     if(ready) {
       return (
         <View>
-          <Text>{today.getUTCDay()}/{today.getUTCDate()}/2017</Text>
+          <Text>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
 
           <ListView
             contentContainerStyle={styles.listView}
             dataSource={this.state.dataSource}
-            initialListSize={35}
+            // initialListSize={35}
             renderRow={this.renderRow}
           />
+
+          <Text>Everyone is ready!</Text>
 
           <Button onPress={this.swipeVote} title="SwipeVote!" />
         </View>
@@ -122,7 +127,7 @@ export default class DayScreen extends React.Component {
     } else {
       return (
         <View>
-          <Text>{today.getUTCDay()}/{today.getUTCDate()}/2017</Text>
+          <Text>{today.getUTCMonth() + 1}/{today.getUTCDate()}/2017</Text>
 
           <ListView
             contentContainerStyle={styles.listView}
@@ -132,6 +137,8 @@ export default class DayScreen extends React.Component {
           />
 
           <YelpSearch />
+          
+          <Button onPress={this.handleSubmitButtonPress} title="Submit" />
         </View>
       );
     }

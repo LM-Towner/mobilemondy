@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import styles from './Styles/LoginScreenStyles'
 import {Images, Metrics} from '../Themes'
 import LoginActions from '../Redux/LoginRedux'
+import DeviceInfo from 'react-native-device-info'
 
 class LoginScreen extends React.Component {
   static propTypes = {
@@ -79,7 +80,23 @@ class LoginScreen extends React.Component {
     const { username, password } = this.state
     this.isAttempting = true
     // attempt a login - a saga is listening to pick it up from here.
-    this.props.attemptLogin(username, password)
+    // this.props.attemptLogin(username, password)
+    const deviceId = DeviceInfo.getUniqueID();
+
+    fetch('http://localhost:3000/api/Users', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: 'default@work.com',
+        username: this.state.username,
+        password: this.state.password,
+        deviceId: deviceId,
+      })
+    });
+
     this.props.navigation.navigate('CalendarScreen')
   }
 
