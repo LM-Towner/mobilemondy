@@ -58,6 +58,7 @@ export default class DayScreen extends React.Component {
     const users = response.users; // remove this line after api endpoint returns live data
     const today = response.date; // remove this line after api endpoint returns live data
     const ready = response.ready; // remove this line after api endpoint returns live data
+
     this.setState({
       dataSource: ds.cloneWithRows(users),
       ready: ready
@@ -77,16 +78,30 @@ export default class DayScreen extends React.Component {
     const deviceId = DeviceInfo.getUniqueID();
 
     fetch('http://localhost:3000/api/rounds', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: date,
-          date: date,
-          deviceId: deviceId,
-        })
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: date,
+        date: date,
+        deviceId: deviceId,
+        recommendations: [
+          {
+            name: 'test location 1',
+            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-xs.png'
+          },
+          {
+            name: 'test location 2',
+            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-sm.png'
+          },
+          {
+            name: 'test location 3',
+            imageUrl: 'http://loopback.io/images/overview/powered-by-LB-med.png'
+          }
+        ]
+      })
     });
   }
 
